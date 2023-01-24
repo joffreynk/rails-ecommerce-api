@@ -4,5 +4,5 @@ class Review < ApplicationRecord
 
   validates :message, :rating, presence:true
   validates :message, lenght: {in:10..500}
-  validates :rating, numericality => { :only_integer => true }
+  validates :rating, numericality: { :only_integer => true }
 end
