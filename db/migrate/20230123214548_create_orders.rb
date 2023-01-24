@@ -4,6 +4,7 @@ class CreateOrders < ActiveRecord::Migration[7.0]
       t.integer :numberOfItems
       t.decimal :totalPrice
       t.string :shippingLocation
+      t.boolean :orderConfirmed
       t.references :user, null: false, foreign_key: true
       t.references :product, null: false, foreign_key: true
 
