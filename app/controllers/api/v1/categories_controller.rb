@@ -16,6 +16,12 @@ class Api::V1::CategoriesController < ApplicationController
     end
   end
 
+  def destroy
+    @category = Category.find(params[:id])
+    @category.destroy
+    render json: {message: 'category destroyed successfully'}, status: 200
+  end
+
   private
   def catagory_params
     params.require(:category).permit(:name, :description);
