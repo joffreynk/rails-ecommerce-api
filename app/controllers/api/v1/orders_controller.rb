@@ -15,6 +15,21 @@ class Api::V1::OrdersController < ApplicationController
     render json: find_order_by_id, status: :201
   end
 
+  def create
+    order = Order.new(order_params)
+    if order.save
+      render json: order, status: :created
+    end
+    render json: {error: order.errors.full_messages}, status: :404
+  end
+
+  def update
+    order = Order.new(order_params)
+    if order.update(order_params)
+      render json: order, status: :ok
+    end
+    render json: {error: order.errors.full_messages}, status: :404
+  end
 
 
   private
@@ -25,5 +40,5 @@ class Api::V1::OrdersController < ApplicationController
   def find_order_by_id
     Order.find(params[:id])
   end
-  
+
 end
