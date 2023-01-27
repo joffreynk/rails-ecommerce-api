@@ -16,7 +16,7 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def create
-    order = Order.new(order_params)
+    order = Order.new(user_id:@current_user.id, **order_params)
     if order.save
       render json: order, status: :created
     end
@@ -24,12 +24,22 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def update
-    order = Order.new(order_params)
+    order = Order.new(user_id:@current_user.id, **order_params)
     if order.update(order_params)
       render json: order, status: :ok
     end
     render json: {error: order.errors.full_messages}, status: :404
   end
+
+  def destroy
+    if find_order_by_id.destroy
+      render json: {success: true}, status: :201
+    end
+  end
+
+  def confrm_order
+  end
+
 
 
   private
@@ -39,6 +49,10 @@ class Api::V1::OrdersController < ApplicationController
 
   def find_order_by_id
     Order.find(params[:id])
+  end
+
+  def order_params
+    params.require(:order).permit(:numberOfItems, :totalPrice, :product_id, :shippingLocation)
   end
 
 end
