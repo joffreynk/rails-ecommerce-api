@@ -11,9 +11,19 @@ class Api::V1::OrdersController < ApplicationController
     render json: {error: 'ooops, no orders was made'}, status: 404
   end
 
+  def show
+    render json: find_order_by_id, status: :201
+  end
+
+
+
   private
   def find_orders_by_user_id
-    Order.find(@current_user.id)
+    Order.where(user_id: @current_user.id)
+  end
+
+  def find_order_by_id
+    Order.find(params[:id])
   end
   
 end
