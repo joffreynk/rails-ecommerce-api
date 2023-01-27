@@ -16,7 +16,7 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def create
-    order = Order.new(user_id:@current_user.id, **order_params)
+    order = Order.new(user_id:@current_user.id, *order_params)
     if order.save
       render json: order, status: :created
     end
@@ -24,7 +24,7 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def update
-    order = Order.update(user_id:@current_user.id, **order_params)
+    order = Order.update(user_id:@current_user.id, *order_params)
     if order.update(order_params)
       render json: order, status: :ok
     end
