@@ -19,9 +19,29 @@ class Api::V1::ProductsController < ApplicationController
         end
     end
 
+    def show
+      render json: find_product, status: 201
+    end
+
+    def update
+      if @current_user.isAdmin
+        product = find_product.update(product_params)
+        render json: product, status: 201
+      else
+          render json: {error: 'you are not allowed to edit a product, please contact your administrator'}, status: 401
+      end
+    end
+
+    
+
+
 
     private
     def product_params
         params.require(:product).permit(:name, :description, :price, :category_id)
+    end
+
+    def find_product
+      Product.find(params[:id])
     end
 end
