@@ -21,8 +21,10 @@ class Api::V1::ReviewsController < ApplicationController
   end
 
   def update
-    if find_review.update(review_params)
-      render json: review, status: 201
+    if @current_user.id == find_review.user_id
+      if find_review.update(review_params)
+        render json: review, status: 201
+      end
     end
   end
 
@@ -33,6 +35,15 @@ class Api::V1::ReviewsController < ApplicationController
       end
     else
       render json: {error: 'You are not allowed to delete this review'}, status: 401
+    end
+  end
+
+  def confirm_review
+    if @current_user.isAdmin
+      find_review.update(reviewConfirmed: true)
+      render json: {message: 'Review confirmed successfully'}, status: 201
+    else
+      render json: {error: 'You are not allowed to confirm this review'}, status: 401
     end
   end
 
