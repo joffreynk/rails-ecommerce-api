@@ -37,9 +37,9 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
-  def confrm_order
+  def confirm_order
     if @current_user.isAdmin
-      order = Order.update(orderConfirmed:true)
+      order = find_order_by_id.update(orderConfirmed:true)
       render json: order, status: 201
     end
     render json: {error: 'ooops, you don\'t have access to confirn an order'}, status: 404
