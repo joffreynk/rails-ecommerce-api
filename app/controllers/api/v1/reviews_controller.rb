@@ -13,6 +13,30 @@ class Api::V1::ReviewsController < ApplicationController
     render json: find_review, status:201
   end
 
+  def create
+    review = Review.new(user_id:@current_user.id, *review_params)
+    if @eview.save
+      render json: review, status: 201
+    else render json: {error: 'ooops verify your data'}, status: 201
+  end
+
+  def update
+    if find_review.update(review_params)
+      render json: review, status: 201
+    end
+  end
+
+  def destroy
+    if @current_user.isAdmin || @current_user.id == find_review.user_id
+      if find_review.destroy
+        render json: {message: 'Review deleted successfully'}, status: 201
+      end
+    else
+      render json: {error: 'You are not allowed to delete this review'}, status: 401
+    end
+  end
+
+
 
   private
   def find_review
