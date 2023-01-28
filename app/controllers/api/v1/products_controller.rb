@@ -32,7 +32,14 @@ class Api::V1::ProductsController < ApplicationController
       end
     end
 
-    
+    def destroy
+      if @current_user.isAdmin
+        product = find_product.destroy
+        render json:  {message: 'product destroyed successfully'}, status: 201
+      else
+          render json: {error: 'you are not allowed to edit a product, please contact your administrator'}, status: 401
+      end
+    end
 
 
 
