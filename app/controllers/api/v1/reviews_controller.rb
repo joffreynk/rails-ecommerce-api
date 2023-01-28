@@ -47,8 +47,6 @@ class Api::V1::ReviewsController < ApplicationController
     end
   end
 
-
-
   private
   def find_review
     Review.find(params[:id])
@@ -57,5 +55,4 @@ class Api::V1::ReviewsController < ApplicationController
   def params_review
     params.require(:review).permit(:rating, :message, :product_id)
   end
-
 end
