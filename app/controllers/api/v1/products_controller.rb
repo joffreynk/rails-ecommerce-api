@@ -8,7 +8,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def create
         if @current_user.isAdmin
-            product = Product.new(user_id: @current_user.id, *product_params)
+            product = Product.new(user_id: @current_user.id, *product_params())
             if product.save
                 render json: product, status: 201
             else
@@ -25,7 +25,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def update
       if @current_user.isAdmin
-        product = find_product.update(product_params)
+        product = find_product.update(product_params())
         render json: product, status: 201
       else
           render json: {error: 'you are not allowed to edit a product, please contact your administrator'}, status: 401
