@@ -8,7 +8,7 @@ class Api::V1::ProductsController < ApplicationController
 
     def create
         if @current_user.isAdmin
-            product = Product.new(user_id: @current_user.id, *product_params())
+            product = Product.new(user_id: @current_user.id, **product_params)
             if product.save
                 render json: product, status: 201
             else
