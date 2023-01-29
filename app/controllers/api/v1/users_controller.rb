@@ -28,18 +28,28 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
-    if find_user.update(user_params)
-      render json: find_user, status: 201
+    if @current_user.isAdmin
+      if find_user.update(user_params)
+        render json: find_user, status: 201
+      else
+        render json: {error: 'oops! user is not updated'}, status: 401
+      end
     else
-      render json: {error: 'oops! user is not updated'}, status: 503
+      @current_user.update(user_params)
+      render json: find_user, status: 200
     end
   end
 
   def destroy
-    if find_user.destroy
-      render json: { m: 'user deleted successfully' }, status: 200
+    if @current_user.isAdmin
+      if find_user.destroy
+        render json: { message: 'user deleted successfully' }, status: 200
+      else
+        render json: { error: 'oops! user is not deleted' }, status: 401
+      end
     else
-      render json: { error: 'oops! user is not deleted' }, status: 503
+      @current_user.destroy(user_params)
+      render json: { message: 'You have deleted you aaccount, please register again' }, status: 200
     end
   end
 
