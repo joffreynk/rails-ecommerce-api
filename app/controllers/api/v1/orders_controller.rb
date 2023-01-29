@@ -23,11 +23,11 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def update
-    order = Order.update(user_id:@current_user.id, **order_params)
-    if order.update(order_params)
-      render json: order, status: :ok
+    if find_order_by_id.update(user_id:@current_user.id, **order_params)
+      render json: find_order_by_id, status: 201
+    else
+      render json: {error: find_order_by_id.errors.full_messages}, status: 404
     end
-    render json: {error: order.errors.full_messages}, status: 404
   end
 
   def destroy
@@ -38,13 +38,12 @@ class Api::V1::OrdersController < ApplicationController
 
   def confirm_order
     if @current_user.isAdmin
-      order = find_order_by_id.update(orderConfirmed:true)
-      render json: order, status: 201
+      find_order_by_id.update(orderConfirmed:true)
+      render json: find_order_by_id, status: 201
+    else
+      render json: {error: 'ooops, you don\'t have access to confirn an order'}, status: 404
     end
-    render json: {error: 'ooops, you don\'t have access to confirn an order'}, status: 404
   end
-
-
 
   private
   def find_orders_by_user_id
