@@ -5,7 +5,7 @@ class Api::V1::ReviewsController < ApplicationController
     if @current_user.isAdmin
       render json:Review.all, status: 201
     else
-      render json: Review.where(user_id: @current_user.id), status: 401
+      render json: Review.where(user_id: @current_user.id), status: 201
     end
   end
 
@@ -14,17 +14,23 @@ class Api::V1::ReviewsController < ApplicationController
   end
 
   def create
-    review = Review.new(user_id:@current_user.id, *review_params)
-    if @eview.save
+    review = Review.new(user_id:@current_user.id, **params_review)
+    if review.save
       render json: review, status: 201
-    else render json: {error: 'ooops verify your data'}, status: 201
+    else 
+      render json: {error: 'ooops verify your data'}, status: 201
+    end
   end
 
   def update
-    if @current_user.id == find_review.user_id
-      if find_review.update(review_params)
-        render json: review, status: 201
+    if @current_user.id == find_review.user_id || @current_user.isAdmin
+      if find_review.update(params_review)
+        render json: find_review, status: 201
+      else
+        render json: {error: 'ooops verify your data'}, status: 201
       end
+    else
+      render json: {error: 'you are not allowed to update this review'}, status: 401
     end
   end
 
@@ -32,6 +38,8 @@ class Api::V1::ReviewsController < ApplicationController
     if @current_user.isAdmin || @current_user.id == find_review.user_id
       if find_review.destroy
         render json: {message: 'Review deleted successfully'}, status: 201
+      else
+        render json: {error: 'ooops, dletion error'}, status: 201
       end
     else
       render json: {error: 'You are not allowed to delete this review'}, status: 401
@@ -43,7 +51,7 @@ class Api::V1::ReviewsController < ApplicationController
       find_review.update(reviewConfirmed: true)
       render json: {message: 'Review confirmed successfully'}, status: 201
     else
-      render json: {error: 'You are not allowed to confirm this review'}, status: 401
+      render json: {error: 'You are not allowed to confirm reviews'}, status: 401
     end
   end
 
