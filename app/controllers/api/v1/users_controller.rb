@@ -4,20 +4,22 @@ class Api::V1::UsersController < ApplicationController
   include JsonWebToken
 
   def index
-    @users = User.all
-    render json: @users, status: 200
+    if @current_user.isAdmin
+      render json: User.all, status: 200
+    else
+      render json: @current_user, status: 201
+    end
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
+    user = User.new(user_params)
+    if user.save
 
-      token = JsonWebToken.encode(user_id: @user.id)
+      token = JsonWebToken.encode(user_id: user.id)
       time = Time.now + 24.hours.to_i
-      render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'),
-                      name: @user.name, user_name: @user.user_name, role: @user.role }, status: 200
+      render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), email: user.email, isAdmin: user.isAdmin }, status: 200
     else
-      render json: { errors: @user.errors.full_messages }, status: 503
+      render json: { errors: user.errors.full_messages }, status: 503
     end
   end
 
@@ -27,9 +29,9 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     if find_user.update(user_params)
-      render json: {m: 'user updated successfully'}: status: 201
+      render json: find_user, status: 201
     else
-      render json: {errors: find_user.errors.full_messages}, status: 503
+      render json: {error: 'oops! user is not updated'}, status: 503
     end
   end
 
@@ -37,8 +39,9 @@ class Api::V1::UsersController < ApplicationController
     if find_user.destroy
       render json: { m: 'user deleted successfully' }, status: 200
     else
-      render json: { errors: find_user.errors.full_messages }, status: 503
+      render json: { error: 'oops! user is not deleted' }, status: 503
     end
+  end
 
   private
   def find_user
@@ -46,6 +49,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:firstName, :lastName, :email, :password, :phoneNumber, :address: password)
+    params.require(:user).permit(:firstName, :lastName, :email, :password_digest, :phoneNumber, :address, :password, :dob, :isAdmin)
   end
 end

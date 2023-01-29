@@ -14,6 +14,8 @@ class Api::V1::CategoriesController < ApplicationController
       category = Category.new(catagory_params())
       if category.save
         render json: category, status: 201
+      else
+        render json: category.errors, status: 422
       end
     else
       render json: {error: 'you are not allowed to create a category'}, status: 404
