@@ -3,12 +3,10 @@ class Api::V1::OrdersController < ApplicationController
 
   def index
     if @current_user.isAdmin
-      render json: Order.all, status: ok
+      render json: Order.all, status: 201
+    else
+      render json: find_orders_by_user_id, status: 201
     end
-    if !@current_user.isAdmin
-      render json: find_orders_by_user_id, status: ok
-    end
-    render json: {error: 'ooops, no orders was made'}, status: 404
   end
 
   def show
@@ -16,15 +14,16 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def create
-    order = Order.new(user_id:@current_user.id, *order_params)
+    order = Order.new(user_id:@current_user.id, **order_params)
     if order.save
       render json: order, status: :created
+    else
+      render json: {error: order.errors.full_messages}, status: 404
     end
-    render json: {error: order.errors.full_messages}, status: 404
   end
 
   def update
-    order = Order.update(user_id:@current_user.id, *order_params)
+    order = Order.update(user_id:@current_user.id, **order_params)
     if order.update(order_params)
       render json: order, status: :ok
     end
@@ -33,7 +32,7 @@ class Api::V1::OrdersController < ApplicationController
 
   def destroy
     if find_order_by_id.destroy
-      render json: {success: true}, status :201
+      render json: {message: 'order destroyed successfully'}, status: 201
     end
   end
 
