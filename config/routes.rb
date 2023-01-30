@@ -6,9 +6,9 @@ Rails.application.routes.draw do
       resources :orders, only: [:index, :create, :show, :update, :destroy]
       resources :users, only: [:index, :create, :update, :show, :destroy]
       resources :reviews, only: [:index, :create, :show, :update, :destroy]
-      post 'login', to: 'authentication#login'
-      post 'orders/confirmOrder/:id', to: 'orders#confirm_order'
-      post 'reviews/confirmReview/:id', to: 'reviews#confirm_review'
+      post '/users/login', to: 'authentication#login'
+      post '/orders/confirmOrder/:id', to: 'orders#confirm_order'
+      post '/reviews/confirmReview/:id', to: 'reviews#confirm_review'
 
     end
   end
