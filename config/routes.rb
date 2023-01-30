@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
+      post 'users/login', to: 'authentication#login'
       resources :categories, only: [:index, :create, :update, :show, :destroy]
       resources :products, only: [:index, :create, :show, :update, :destroy]
       resources :orders, only: [:index, :create, :show, :update, :destroy]
       resources :users, only: [:index, :create, :update, :show, :destroy]
       resources :reviews, only: [:index, :create, :show, :update, :destroy]
-      post '/users/login', to: 'authentication#login'
-      post '/orders/confirmOrder/:id', to: 'orders#confirm_order'
-      post '/reviews/confirmReview/:id', to: 'reviews#confirm_review'
+      post 'orders/confirmOrder/:id', to: 'orders#confirm_order'
+      post 'reviews/confirmReview/:id', to: 'reviews#confirm_review'
 
     end
   end

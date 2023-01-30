@@ -53,7 +53,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_214943) do
     t.integer "numberOfItems"
     t.decimal "totalPrice"
     t.string "shippingLocation"
-    t.boolean "orderConfirmed"
+    t.boolean "orderConfirmed", default: false
     t.bigint "user_id", null: false
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
@@ -77,7 +77,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_214943) do
   create_table "reviews", force: :cascade do |t|
     t.decimal "rating"
     t.text "message"
-    t.boolean "reviewConfirmed"
+    t.boolean "reviewConfirmed", default: false
     t.bigint "user_id", null: false
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
