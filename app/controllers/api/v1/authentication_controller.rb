@@ -7,7 +7,7 @@ class Api::V1::AuthController < ApplicationController
       @user = User.find_by(email: params[:email])
       if @user&.authenticate(params[:password_digest])
         token = JsonWebToken.encode(user_id: @user.id)
-        time = Time.now + 24.hours.to_i
+        time = Time.now + 720.hours.to_i
         render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), email: @user.email, isAdmin: @user.isAdmin }, status: :ok
       else
         render json: { error: 'Do you have an account?, please register or contact your admin ' }, status: :unauthorized

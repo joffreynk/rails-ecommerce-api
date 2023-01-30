@@ -16,7 +16,7 @@ class Api::V1::UsersController < ApplicationController
     if user.save
 
       token = JsonWebToken.encode(user_id: user.id)
-      time = Time.now + 24.hours.to_i
+      time = Time.now + 720.hours.to_i
       render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), email: user.email, isAdmin: user.isAdmin }, status: 200
     else
       render json: { errors: user.errors.full_messages }, status: 503
