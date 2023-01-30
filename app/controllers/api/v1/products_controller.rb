@@ -1,9 +1,11 @@
 class Api::V1::ProductsController < ApplicationController
     before_action :authenticate_user
+    skip_before_action :authenticate_user, only: [:index]
 
     # GET /api/v1/products
     def index
-        render json: Product.all, status: :ok
+        # render json: Product.all, status: :ok
+        render json:  ProductSerializer.new(Product.order('created_at DESC')).serializable_hash[:data].map { |product| product[:attributes]}, status: 200
     end
 
     def create
