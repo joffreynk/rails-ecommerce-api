@@ -7,7 +7,7 @@ class Api::V1::UsersController < ApplicationController
     if @current_user.isAdmin
       render UserSerializer.new(User.all).serializable_hash[:adat].map{|user| user[:attributes]}, status: 200
     else
-      render json: @current_user, status: 201
+      render render UserSerializer.new(@current_user).serializable_hash[:data][:attributes], status: 201
     end
   end
 
@@ -24,19 +24,19 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    render json: find_user, status: 200
+    render UserSerializer.new(find_user).serializable_hash[:data][:attributes], status: 201
   end
 
   def update
     if @current_user.isAdmin
       if find_user.update(user_params)
-        render json: find_user, status: 201
+        render UserSerializer.new(find_user).serializable_hash[:data][:attributes], status: 201
       else
         render json: {error: 'oops! user is not updated'}, status: 401
       end
     else
       @current_user.update(user_params)
-      render json: find_user, status: 200
+      render UserSerializer.new(find_user).serializable_hash[:data][:attributes] , status: 200
     end
   end
 
