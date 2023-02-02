@@ -5,7 +5,7 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     if @current_user.isAdmin
-      render json: User.all, status: 200
+      render UserSerializer.new(User.all).serializable_hash[:adat].map{|user| user[:attributes]}, status: 200
     else
       render json: @current_user, status: 201
     end
@@ -59,6 +59,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:firstName, :lastName, :email, :password_digest, :phoneNumber, :address, :password, :dob, :isAdmin)
+    params.require(:user).permit(:firstName, :lastName, :email, :password_digest, :phoneNumber, :address, :password, :dob, :isAdmin, :profile_picture)
   end
 end

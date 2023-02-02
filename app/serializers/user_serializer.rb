@@ -1,4 +1,4 @@
 class UserSerializer
   include JSONAPI::Serializer
-  attributes :id, :firstName, :lastName, :email, :dob, :phoneNumber, :address, :created_at , :updated_at
+  attributes :id, :firstName, :lastName, :email, :dob, :phoneNumber, :address, :created_at , :updated_at, :profile_picture, :profile_picture_url
 end
