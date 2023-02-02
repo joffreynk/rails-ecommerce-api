@@ -12,7 +12,7 @@ class Api::V1::ProductsController < ApplicationController
         if @current_user.isAdmin
             product = Product.new(user_id: @current_user.id, **product_params)
             if product.save
-                render ProductSerializer.new(product).serializable_hash[:data][:attributes], status: 201
+                render json:  ProductSerializer.new(product).serializable_hash[:data][:attributes], status: 201
             else
                 render json: product.errors, status: 401
             end
@@ -22,13 +22,13 @@ class Api::V1::ProductsController < ApplicationController
     end
 
     def show
-      render ProductSerializer.new(find_product).serializable_hash[:data][:attributes], status: 201
+      render json:  ProductSerializer.new(find_product).serializable_hash[:data][:attributes], status: 201
     end
 
     def update
       if @current_user.isAdmin
         if find_product.update(product_params)
-          render ProductSerializer.new(find_product).serializable_hash[:data][:attributes], status: 201
+          render json:  ProductSerializer.new(find_product).serializable_hash[:data][:attributes], status: 201
         else
           render json: {error: 'ooops, your category is not updated'}, status: 404
         end

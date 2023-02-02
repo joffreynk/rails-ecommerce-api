@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      post 'users/login', to: 'authentication#login'
+      post '/users/login', to: 'authentication#login'
       resources :categories, only: [:index, :create, :update, :show, :destroy]
       resources :products, only: [:index, :create, :show, :update, :destroy]
       resources :orders, only: [:index, :create, :show, :update, :destroy]
