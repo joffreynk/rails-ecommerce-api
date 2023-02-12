@@ -19,7 +19,7 @@ class Api::V1::UsersController < ApplicationController
       time = Time.now + 720.hours.to_i
       render json: { token:, exp: time.strftime('%m-%d-%Y %H:%M'), email: user.email, isAdmin: user.isAdmin }, status: 200
     else
-      render json: { errors: user.errors.full_messages }, status: 503
+      render json: { message: user.errors.full_messages }, status: 401
     end
   end
 
@@ -30,9 +30,9 @@ class Api::V1::UsersController < ApplicationController
   def update
     if @current_user.isAdmin
       if find_user.update(user_params)
-        render UserSerializer.new(find_user).serializable_hash[:data][:attributes], status: 201
+        render UserSerializer.new(User.all).serializable_hash[:data].map {|user| user[:attributes]}, status: 200
       else
-        render json: {error: 'oops! user is not updated'}, status: 401
+        render json: {message: 'oops! user is not updated'}, status: 401
       end
     else
       @current_user.update(user_params)
@@ -43,9 +43,9 @@ class Api::V1::UsersController < ApplicationController
   def destroy
     if @current_user.isAdmin
       if find_user.destroy
-        render json: { message: 'user deleted successfully' }, status: 200
+        render json: UserSerializer.new(User.all).serializable_hash[:data].map {|user| user[:attributes]}, status: 200
       else
-        render json: { error: 'oops! user is not deleted' }, status: 401
+        render json: { message: 'oops! user is not deleted' }, status: 401
       end
     else
       @current_user.destroy(user_params)
