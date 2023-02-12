@@ -28,22 +28,22 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def update
-    if @current_user.isAdmin
+    if @current_user.isAdmin || find_user.user_id==@current_user.id
       if find_user.update(user_params)
-        render UserSerializer.new(User.all).serializable_hash[:data].map {|user| user[:attributes]}, status: 200
+        render json: UserSerializer.new(find_user).serializable_hash[:data][:attributes] , status: 200
       else
-        render json: {message: 'oops! user is not updated'}, status: 401
+        render json: { message: user.errors.full_messages }, status:404
       end
     else
-      @current_user.update(user_params)
-      render json: UserSerializer.new(find_user).serializable_hash[:data][:attributes] , status: 200
+      render json: { message: 'You are not eligable to delete this user'}, status:404
     end
+
   end
 
   def destroy
     if @current_user.isAdmin
       if find_user.destroy
-        render json: UserSerializer.new(User.all).serializable_hash[:data].map {|user| user[:attributes]}, status: 200
+        render json: { message: 'User is deleted' }, status: 201
       else
         render json: { message: 'oops! user is not deleted' }, status: 401
       end
