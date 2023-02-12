@@ -5,7 +5,7 @@ class Api::V1::OrdersController < ApplicationController
     if @current_user.isAdmin
       render json: Order.all, status: 201
     else
-      render json: find_orders_by_user_id, status: 201
+      render json: Order.where(user_id: @current_user.id), status: 201
     end
   end
 
@@ -16,9 +16,9 @@ class Api::V1::OrdersController < ApplicationController
   def create
     order = Order.new(user_id:@current_user.id, **order_params)
     if order.save
-      render json: order, status: :created
+      render json: order, status: 201
     else
-      render json: {error: order.errors.full_messages}, status: 404
+      render json: {message: order.errors.full_messages}, status: 401
     end
   end
 
@@ -26,7 +26,7 @@ class Api::V1::OrdersController < ApplicationController
     if find_order_by_id.update(user_id:@current_user.id, **order_params)
       render json: find_order_by_id, status: 201
     else
-      render json: {error: find_order_by_id.errors.full_messages}, status: 404
+      render json: {message: find_order_by_id.errors.full_messages}, status: 401
     end
   end
 
@@ -41,7 +41,7 @@ class Api::V1::OrdersController < ApplicationController
       find_order_by_id.update(orderConfirmed:true)
       render json: find_order_by_id, status: 201
     else
-      render json: {error: 'ooops, you don\'t have access to confirn an order'}, status: 404
+      render json: {message: 'ooops, you don\'t have access to confirn an order'}, status: 404
     end
   end
 

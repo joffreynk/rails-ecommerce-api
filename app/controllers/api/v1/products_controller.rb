@@ -12,7 +12,7 @@ class Api::V1::ProductsController < ApplicationController
         if @current_user.isAdmin
             product = Product.new(user_id: @current_user.id, **product_params)
             if product.save
-                render json:  ProductSerializer.new(Product.order('created_at DESC')).serializable_hash[:data].map { |product| product[:attributes]}, status: 200
+                render json:  ProductSerializer.new(product).serializable_hash[:data][:attributes], status: 201
             else
                 render json: product.errors, status: 401
             end
@@ -27,8 +27,9 @@ class Api::V1::ProductsController < ApplicationController
 
     def update
       if @current_user.isAdmin
-        if find_product.update(product_params)
-          render json:  ProductSerializer.new(Product.order('created_at DESC')).serializable_hash[:data].map { |product| product[:attributes]}, status: 200
+        product = find_product.update(product_params)
+        if product
+          render json:  ProductSerializer.new(product).serializable_hash[:data][:attributes], status: 201
         else
           render json: {message: 'ooops, your category is not updated'}, status: 404
         end
@@ -40,7 +41,7 @@ class Api::V1::ProductsController < ApplicationController
     def destroy
       if @current_user.isAdmin
         product = find_product.destroy
-        render json:  ProductSerializer.new(Product.order('created_at DESC')).serializable_hash[:data].map { |product| product[:attributes]}, status: 200
+        render json:  {message: 'Product deleted success fully'}, status: 401
       else
           render json: {message: 'you are not allowed to edit a product, please contact your administrator'}, status: 401
       end
