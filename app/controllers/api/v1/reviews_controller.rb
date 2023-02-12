@@ -16,11 +16,7 @@ class Api::V1::ReviewsController < ApplicationController
   def create
     review = Review.new(user_id:@current_user.id, **params_review)
     if review.save
-      if @current_user.isAdmin
-        render json: Review.all, status: 201
-      else
-        Review.where(user_id: @current_user.id), status: 201
-      end
+      render json: review, status: 201
     else 
       render json: {message: 'ooops verify your data'}, status: 201
     end
@@ -29,11 +25,7 @@ class Api::V1::ReviewsController < ApplicationController
   def update
     if @current_user.id == find_review.user_id || @current_user.isAdmin
       if find_review.update(params_review)
-        if @current_user.isAdmin
-          render json: Review.all, status: 201
-        else
-          Review.where(user_id: @current_user.id), status: 201
-        end
+        render json: find_review, status: 201
       else
         render json: {message: 'ooops verify your data'}, status: 201
       end
@@ -45,11 +37,7 @@ class Api::V1::ReviewsController < ApplicationController
   def destroy
     if @current_user.isAdmin || @current_user.id == find_review.user_id
       if find_review.destroy
-        if @current_user.isAdmin
-          render json: Review.all, status: 201
-        else
-          Review.where(user_id: @current_user.id), status: 201
-        end
+        render json: {message: 'Review deleted successfully'}, status: 201
       else
         render json: {message: 'ooops, deletion error'}, status: 201
       end
@@ -61,7 +49,7 @@ class Api::V1::ReviewsController < ApplicationController
   def confirm_review
     if @current_user.isAdmin
       find_review.update(reviewConfirmed: true)
-      render json: render json: Review.all, status: 201
+      render json: find_review, status: 201
     else
       render json: {message: 'You are not allowed to confirm reviews'}, status: 401
     end
